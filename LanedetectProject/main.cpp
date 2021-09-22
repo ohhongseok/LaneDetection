@@ -269,7 +269,7 @@ int main(int argc, char** argv) {
 	CSerialComm serialComm; //SerialComm 객체 생성
 
 
-	if (!serialComm.connect("COM4")) //COM25번의 포트 오픈
+	if (!serialComm.connect((char*)"COM13")) //COM25번의 포트 오픈
 	{
 		cout << "connect faliled" << endl;
 		return -1;
@@ -280,10 +280,12 @@ int main(int argc, char** argv) {
 #ifdef ROS
 	//웹캠을 통해 이미지를 받아들임
 	//ROS 메크로 처리(웹캠으로 영상 받음)
-	VideoCapture cap(0);
+	VideoCapture cap(1);
 #else
 	//그렇지 않을경우 그냥 동영상 파일을 받아들임
-	VideoCapture cap("compete.mp4");
+	//VideoCapture cap("compete.mp4");
+	//웹캠으로 받기
+	VideoCapture cap(1);
 #endif
 	Mat frame;
 	//카메라나 영상 메크로를 받고, 입력된 것이 없으면 메시지 출력
