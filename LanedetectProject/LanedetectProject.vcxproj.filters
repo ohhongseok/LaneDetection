@@ -24,7 +24,7 @@
     <ClCompile Include="SerialPort.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="test.cpp">
+    <ClCompile Include="webcam.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
