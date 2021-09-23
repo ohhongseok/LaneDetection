@@ -1,0 +1,93 @@
+//Arduino 에서 조향을 담당하는 Part로,
+//Serial communication을 통해 넘어온 값을 통해 일정 범위에 있을시 각도 조향
+//코드부분 ARDUINO IDE에서 업로드 후, Port Num 확인 후, 시리얼 통신을 주관하는
+//cpp 파일에 해당 포트번호 작성,(주의 : char * 형으로 형변환후에 작성해야함)
+
+#include <Servo.h>
+
+int servoPin = 10;
+
+Servo servo;
+int buffer[30];
+int bufferIndex=0;
+int degree=90;
+
+void setup()
+{
+
+  Serial.begin(9600);
+  servo.attach(servoPin);
+}
+
+void loop()
+{
+   if (Serial.available() > 0) {// 데이터를 입력 받았을 경우
+
+       buffer[bufferIndex] = Serial.read(); // 입력 데이터를 받고, buffer에 저장
+       
+    if (buffer[bufferIndex]>110) //왼쪽으로 모터 꺾기
+    {  
+     
+      buffer[bufferIndex] = 0;                                        
+      degree=buffer[bufferIndex]-90;
+      servo.write(85);
+  
+      bufferIndex = 0;                                                 
+
+    }
+    
+    else if (buffer[bufferIndex] < 90) { //오른쪽으로 모터 꺾기
+     
+      buffer[bufferIndex] = 0;                                        
+     degree=buffer[bufferIndex]-90;
+      servo.write(105);
+  
+      bufferIndex = 0;                                                 
+
+    }
+    else if ((buffer[bufferIndex]>=90)&&(buffer[bufferIndex]<=110)) { //직진
+     
+      buffer[bufferIndex] = 0;                                        
+      servo.write(95);
+  
+      bufferIndex = 0;                                                 
+    }
+    else {
+      bufferIndex++;    // 배열을 초기화
+      bufferIndex = bufferIndex%30;   //인덱스 번호가 20을 넘어갈 경우 다시 0부터 시작할 수 있게 나머지 값으로 인덱스 설정                  
+    }
+  }
+
+}
+
+
+/*서보모터 조향을 위한 코드*/
+/*90도 조향을 위한 간단한 TEST CODE*/
+/*
+#include <Servo.h>
+
+int servoPin = 10;
+
+Servo servo;
+
+void setup()
+{
+
+  Serial.begin(9600);
+  servo.attach(servoPin);
+}
+void loop(){
+  Serial.println("90\n");
+  servo.write(95);
+  delay (4000);
+  
+  Serial.println("80\n");
+  servo.write(85);
+  delay (4000);
+  Serial.println("100\n");
+  servo.write(105);
+  delay (4000);
+  
+  
+  }
+  */

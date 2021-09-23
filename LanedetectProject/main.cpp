@@ -136,13 +136,13 @@ void find_lines(Mat& img, vector<cv::Vec4i>& left_lines, vector<Vec4i>& right_li
 		left_b_mem = left_b;
 #ifdef CAMERA_SHOW
 		line(img, Point(left_x0, 0), Point(left_x120, YHalf), Blue, 3);
-		std::cout << left_lines.size() << "left lines.";
+		//std::cout   << left_lines.size() << "left lines.";
 		*leftX_inter = left_x120;
 #endif
 	}
 
 	else {
-		std::cout << "\tNo left LINE,";
+		std::cout << "No left LINE,";
 	}
 
 	bool draw_right = find_line_params(right_lines, &right_m, &right_b);
@@ -153,12 +153,12 @@ void find_lines(Mat& img, vector<cv::Vec4i>& left_lines, vector<Vec4i>& right_li
 		right_b_mem = right_b;
 #ifdef CAMERA_SHOW
 		line(img, Point(right_x0, 0), Point(right_x120, YHalf), Red, 3);
-		std::cout << right_lines.size() << "right lines.";
+		//std::cout << right_lines.size() << "right lines.";
 		*rightX_inter = right_x120;
 #endif
 	}
 	else {
-		std::cout << "\t No Right LINE,";
+		std::cout << "No Right LINE,";
 	}
 	float left_xPt[2];
 	float right_xPt[2];
@@ -315,7 +315,7 @@ int main(int argc, char** argv) {
 	for (;;) {
 		if (capture) {
 			cap >> frame;
-			if (frame.empty()) // 더이상 읽을 프레임이 없으면 
+			if (frame.empty()) // 더이상 읽을 프레임이 없으면   
 				break;
 		}
 		if ((key = waitKey(30)) >= 0)
@@ -337,10 +337,10 @@ int main(int argc, char** argv) {
 		//조향을 위한 제어부 전송while 영상 끝까지
 		if (!serialComm.sendCommand(differ))
 		{
-			cout << "send command failed";
+			cout << "send command failed"<<endl;
 		}
 		else
-			cout << "send Command success";
+			cout << "send Command success"<<endl;
 
 
 #ifdef ROS
