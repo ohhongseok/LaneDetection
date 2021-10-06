@@ -23,6 +23,7 @@
 #include<stdio.h>
 #include<fcntl.h>
 #include<time.h>
+#include<Windows.h>
 
 //서보 모터를 제어할 serial
 
@@ -181,9 +182,12 @@ void find_lines(Mat& img, vector<cv::Vec4i>& left_lines, vector<Vec4i>& right_li
 }
 int img_process(Mat& frame) { //프레임 하나를 받고, int 값 rtn
 
+
 	static float leftX = 0, rightX = 0;
 	Mat grayframe, edge_frame, roi_gray_ch3;
 	Mat roi;
+	//따로 추가한 num
+	int steringNum = 100; 
 	/*
 		회색 img로 변환 후, grayFrame에 해당 img 저장
 	*/
@@ -226,17 +230,24 @@ int img_process(Mat& frame) { //프레임 하나를 받고, int 값 rtn
 #ifdef CAMERA_SHOW
 	//차선이 기울어진 방향에 따라 좌, 우 화살표 표시(소실점을 기준으로)
 
-	if (ratio > 1.1) // 왼쪽으로 꺾어야함
+	/*
+		원본값
+		1.1
+		0.9
+	*/
+	if (ratio > 1.5) // 왼쪽으로 꺾어야함
 	{
-
+		steringNum = 83;
 		arrowedLine(frame, Point(XHalf, YHalf), Point(XHalf - ratio * 10, YHalf), Scalar(255, 120, 40), 4);
 	}
-	else if (ratio < 0.9) // 오른쪽으로 꺾어야함
+	else if (ratio <0.5) // 오른쪽으로 꺾어야함
 	{
+		steringNum=115;
 		arrowedLine(frame, Point(XHalf, YHalf), Point(XHalf + 1.0 / ratio * 10, YHalf), Scalar(40, 120, 255), 4);
 	}
-	else // 직선으로 가기
+	else  // 직선으로 가기
 	{
+		steringNum=90;
 		circle(frame, Point(vpt.x, YHalf - 3), 5, Scalar(255, 70, 255), -1);
 	}
 	// 화면의 한 가운데를 기준으로 차선을 그림
@@ -260,30 +271,32 @@ int img_process(Mat& frame) { //프레임 하나를 받고, int 값 rtn
 	imshow("frame", frame);
 	imshow("roi_gray_ch3", roi_gray_ch3);
 #endif
-	return ratio * 100;
+	return steringNum;
+	//return ratio * 100;
 }
 
 
 int main(int argc, char** argv) {
 
-	CSerialComm serialComm; //SerialComm 객체 생성
+		CSerialComm serialComm; //SerialComm 객체 생성
 
 
-	if (!serialComm.connect((char*)"COM13")) //COM25번의 포트 오픈
+	if (!serialComm.connect((char*)"COM14")) //COM25번의 포트 오픈
 	{
 		cout << "connect faliled" << endl;
 		return -1;
 	}
 	else
+	{
 		cout << "connect successed" << endl;
-
-#ifdef ROS
+	}
+	#ifdef ROS
 	//웹캠을 통해 이미지를 받아들임
 	//ROS 메크로 처리(웹캠으로 영상 받음)
 	VideoCapture cap(1);
 #else
 	//그렇지 않을경우 그냥 동영상 파일을 받아들임
-	//VideoCapture cap("compete.mp4");
+	//VideoCapture cap("Highway.mp4");
 	//웹캠으로 받기
 	VideoCapture cap(1);
 #endif
@@ -328,21 +341,23 @@ int main(int argc, char** argv) {
 			}
 		}
 		if (capture == false) continue;
-
+		Sleep(100);
 		fr_no++; //다음번 프레임으로 ++
 		resize(frame, frame, Size(Width, Height));
 		//image_process로 resize된 이미지 "frame"을 넘겨줌
 		differ = img_process(frame);
 
 		//조향을 위한 제어부 전송while 영상 끝까지
+		
 		if (!serialComm.sendCommand(differ))
 		{
 			cout << "send command failed"<<endl;
 		}
 		else
-			cout << "send Command success"<<endl;
+		{
+			cout << "send Command success" << endl;
 
-
+		}
 #ifdef ROS
 		//ros 활용 시 differ의 값을 통해
 		//motor 조작(ex handle, dcmotor)
