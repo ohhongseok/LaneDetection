@@ -237,12 +237,12 @@ int img_process(Mat& frame) { //프레임 하나를 받고, int 값 rtn
 	*/
 	if (ratio > 1.5) // 왼쪽으로 꺾어야함
 	{
-		steringNum = 83;
+		steringNum = 60;
 		arrowedLine(frame, Point(XHalf, YHalf), Point(XHalf - ratio * 10, YHalf), Scalar(255, 120, 40), 4);
 	}
 	else if (ratio <0.5) // 오른쪽으로 꺾어야함
 	{
-		steringNum=115;
+		steringNum=120;
 		arrowedLine(frame, Point(XHalf, YHalf), Point(XHalf + 1.0 / ratio * 10, YHalf), Scalar(40, 120, 255), 4);
 	}
 	else  // 직선으로 가기
@@ -281,7 +281,7 @@ int main(int argc, char** argv) {
 		CSerialComm serialComm; //SerialComm 객체 생성
 
 
-	if (!serialComm.connect((char*)"COM14")) //COM25번의 포트 오픈
+	if (!serialComm.connect((char*)"COM12")) //COM25번의 포트 오픈
 	{
 		cout << "connect faliled" << endl;
 		return -1;
@@ -341,7 +341,7 @@ int main(int argc, char** argv) {
 			}
 		}
 		if (capture == false) continue;
-		Sleep(100);
+		//Sleep(100);
 		fr_no++; //다음번 프레임으로 ++
 		resize(frame, frame, Size(Width, Height));
 		//image_process로 resize된 이미지 "frame"을 넘겨줌

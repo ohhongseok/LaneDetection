@@ -10,7 +10,8 @@ int CSerialComm::connect(char* portNum)
 	if (!serial.OpenPort(portNum)) //포트를 오픈하고 오픈에 실패하였으면 fail을 반환한다.
 		return RETURN_FAIL;
 
-	serial.ConfigurePort(CBR_9600, 8, FALSE, NOPARITY, ONESTOPBIT); //포트 기본값을 설정한다.
+	//original CBR_9600
+	serial.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT); //포트 기본값을 설정한다.
 	serial.SetCommunicationTimeouts(0, 0, 0, 0, 0); //Timeout값 설정
 
 	return RETURN_SUCCESS;
